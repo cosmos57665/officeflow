@@ -42,16 +42,24 @@ def _get_client():
     return _client
 
 
-def ask_claude(system: str, user: str, max_tokens: int = 2000) -> str:
+def ask_claude(
+    system: str,
+    user: str,
+    max_tokens: int = 2000,
+    response_mime_type: str | None = None,
+) -> str:
     """Send one prompt to Gemini and return the text of the reply."""
+    config_args = {
+        "system_instruction": system,
+        "max_output_tokens": max_tokens,
+    }
+    if response_mime_type:
+        config_args["response_mime_type"] = response_mime_type
     try:
         response = _get_client().models.generate_content(
             model=MODEL,
             contents=user,
-            config=types.GenerateContentConfig(
-                system_instruction=system,
-                max_output_tokens=max_tokens,
-            ),
+            config=types.GenerateContentConfig(**config_args),
         )
     except LLMError:
         raise
@@ -82,7 +90,7 @@ def ask_claude_json(system: str, user: str, max_tokens: int = 2000):
         system
         + "\n\nRespond with valid JSON only. No explanations, no markdown fences."
     )
-    raw = ask_claude(json_system, user, max_tokens)
+    raw = ask_claude(json_system, user, max_tokens, response_mime_type="application/json")
     try:
         return json.loads(_strip_fences(raw))
     except json.JSONDecodeError as exc:

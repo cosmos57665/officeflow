@@ -40,6 +40,22 @@ class LLMFailureMessageTests(unittest.TestCase):
             config="config",
         )
 
+    def test_ask_claude_json_requests_json_response_mime_type(self):
+        fake_client = unittest.mock.Mock()
+        fake_response = unittest.mock.Mock(text='{"ok": true}')
+        fake_client.models.generate_content.return_value = fake_response
+        with patch.object(llm, "_get_client", return_value=fake_client), patch.object(
+            llm.types, "GenerateContentConfig", return_value="json-config"
+        ) as config_cls:
+            result = llm.ask_claude_json("System prompt", "User prompt")
+
+        self.assertEqual(result, {"ok": True})
+        config_cls.assert_called_once_with(
+            system_instruction=unittest.mock.ANY,
+            max_output_tokens=2000,
+            response_mime_type="application/json",
+        )
+
     def test_missing_api_key_points_to_demo_mode(self):
         old_client = llm._client
         llm._client = None
