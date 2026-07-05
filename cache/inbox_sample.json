@@ -1,0 +1,58 @@
+[
+  {
+    "from": "priya.nair@apexsupplies.example.com",
+    "subject": "URGENT: Defective toner cartridges in order #4471 — production halted",
+    "category": "Urgent",
+    "one_line_summary": "18 of 24 toner cartridges in order #4471 are leaking, halting the vendor's print room before a 4 PM deadline; replacements or local-purchase authorization needed today.",
+    "suggested_reply": "Dear Ms. Nair,\n\nThank you for flagging this, and please accept our apologies for the disruption. We are dispatching 18 replacement cartridges by courier within the hour and will share the tracking number as soon as it is available. In parallel, you are authorized to purchase up to 6 cartridges locally at our cost if the courier cannot reach you before your 4 PM deadline — please retain the receipts for reimbursement. Our quality team will also investigate this batch and share a corrective-action summary with you by Friday.\n\nBest regards"
+  },
+  {
+    "from": "daniel.okafor@brightline.example.com",
+    "subject": "Escalation: Phase 2 deliverables slipping — need a call TODAY",
+    "category": "Urgent",
+    "one_line_summary": "Client escalating unanswered emails about overdue Phase 2 wireframes that threaten Friday's board demo and demanding a call with time slots before 6 PM today.",
+    "suggested_reply": "Dear Mr. Okafor,\n\nI sincerely apologize that your earlier emails went unanswered — that is not the standard we hold ourselves to. I can offer a call today at 3:00 PM or 5:00 PM; please pick whichever suits you and I will send the invite immediately. Ahead of the call, I will circulate the current status of the Phase 2 wireframes and a firm delivery plan that protects your Friday board demo. You will have my direct number after the call for anything further.\n\nBest regards"
+  },
+  {
+    "from": "meera.iyer@officeflow-corp.example.com",
+    "subject": "Request to reschedule Thursday's quarterly review",
+    "category": "Action Needed",
+    "one_line_summary": "Finance has a statutory audit on Thursday morning and asks to move the quarterly review to Friday 11 AM or Monday 2 PM, with a calendar update needed.",
+    "suggested_reply": "Hi Meera,\n\nThanks for the heads-up about the audit visit. Friday 11 AM works well on our side, so let's move the quarterly review to that slot. I will update the calendar invite shortly, and we will keep the existing agenda and slide deck as planned. Good luck with the audit on Thursday.\n\nBest regards"
+  },
+  {
+    "from": "accounts@velocitylogistics.example.com",
+    "subject": "Query on invoice INV-2093 — mismatch of ₹12,400",
+    "category": "Action Needed",
+    "one_line_summary": "Velocity Logistics disputes a ₹12,400 'peak season surcharge' on invoice INV-2093 that was not in the quotation and asks for an approval reference or a revised invoice.",
+    "suggested_reply": "Dear Accounts Payable Team,\n\nThank you for the detailed query on invoice INV-2093. We are reviewing the surcharge line item against purchase order PO-5521 and the original quotation. If the surcharge was not covered by an approved change, we will issue a revised invoice; otherwise we will send you the written approval reference. You will have a definitive answer from us within two business days so the payment can be processed this cycle.\n\nBest regards"
+  },
+  {
+    "from": "rahul.menon@officeflow-corp.example.com",
+    "subject": "Leave application: 14–18 July (5 working days)",
+    "category": "Action Needed",
+    "one_line_summary": "Rahul requests leave from 14–18 July for a family function, with Anita covering the helpdesk roster and handover notes promised before he leaves.",
+    "suggested_reply": "Hi Rahul,\n\nThanks for planning ahead and arranging cover with Anita. Your leave from 14 to 18 July is approved, so please go ahead and confirm your travel bookings. Do share the ticket handover notes with the team before your last working day. Enjoy the family function.\n\nBest regards"
+  },
+  {
+    "from": "newsletter@worksmart-digest.example.com",
+    "subject": "WorkSmart Weekly: 5 automation trends shaping offices in 2026",
+    "category": "FYI",
+    "one_line_summary": "Subscribed newsletter covering office automation trends, a document tools comparison, an upcoming webinar, and a hybrid-work poll — no action required.",
+    "suggested_reply": null
+  },
+  {
+    "from": "it-helpdesk@officeflow-corp.example.com",
+    "subject": "Notice: Email server maintenance this Saturday 10 PM – 2 AM",
+    "category": "FYI",
+    "one_line_summary": "Scheduled email server maintenance Saturday 10 PM–2 AM IST; incoming mail will queue and deliver afterwards, with no action needed.",
+    "suggested_reply": null
+  },
+  {
+    "from": "sunita.rao@officeflow-corp.example.com",
+    "subject": "FYI: June facilities utilization report attached",
+    "category": "FYI",
+    "one_line_summary": "June facilities report shared for records: meeting room utilization up to 72%, cafeteria footfall steady, and printer replacement completed under budget.",
+    "suggested_reply": null
+  }
+]

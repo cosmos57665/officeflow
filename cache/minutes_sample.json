@@ -1,0 +1,44 @@
+{
+  "title": "St. Mary's School — Office Staff Weekly Meeting",
+  "date": "3 July 2026",
+  "attendees": [
+    "Meera Pillai (Office Manager)",
+    "Daniel Mathew (Admissions)",
+    "Kavitha Rao (Accounts)",
+    "Joseph Thomas (Facilities)",
+    "Anita George (Front Desk)"
+  ],
+  "summary": [
+    "Admission enquiries for the new academic year are up 22% over last year; 340 application forms have been issued so far.",
+    "Term-fee reminders went out to 68 families; Accounts expects most payments to clear before the 15 July deadline.",
+    "The auditorium projector and two classroom fans need repair before the parent orientation on 24 July.",
+    "Front desk reported repeated parent queries about the new bus routes; a printed FAQ sheet was proposed and approved."
+  ],
+  "action_items": [
+    {
+      "task": "Compile the admissions enquiry report and share it with the principal",
+      "owner": "Daniel Mathew",
+      "deadline": "8 July 2026"
+    },
+    {
+      "task": "Send second fee reminder to families with pending payments",
+      "owner": "Kavitha Rao",
+      "deadline": "16 July 2026"
+    },
+    {
+      "task": "Get repair quotes for the auditorium projector and classroom fans",
+      "owner": "Joseph Thomas",
+      "deadline": "11 July 2026"
+    },
+    {
+      "task": "Draft the bus-route FAQ sheet for the front desk and reception notice board",
+      "owner": "Anita George",
+      "deadline": "10 July 2026"
+    }
+  ],
+  "decisions": [
+    "Parent orientation confirmed for 24 July 2026 in the main auditorium.",
+    "A one-page bus-route FAQ will be printed and kept at the front desk.",
+    "Office will move to the new visitor sign-in register from 14 July 2026."
+  ]
+}
