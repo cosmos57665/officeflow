@@ -1,4 +1,4 @@
-"""Module 2: Inbox — paste raw emails, one Claude call triages them into three columns."""
+"""Module 2: Inbox — paste raw emails, one Gemini call triages them into three columns."""
 import json
 import time
 from pathlib import Path
@@ -76,7 +76,7 @@ def _triage(text: str, demo: bool):
     else:
         n = len([p for p in text.split("---") if p.strip()])
         try:
-            with st.spinner(f"Triaging {n} emails with Claude (one call)..."):
+            with st.spinner(f"Triaging {n} emails with Gemini (one call)..."):
                 raw = llm.ask_claude_json(TRIAGE_SYSTEM, text,
                                           max_tokens=min(500 + 350 * n, 8000))
         except llm.LLMError as exc:

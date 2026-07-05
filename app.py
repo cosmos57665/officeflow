@@ -152,7 +152,7 @@ with st.sidebar:
             "- Python: app runtime and automation glue\n"
             "- Streamlit: web interface and navigation\n"
             "- Whisper: local audio transcription\n"
-            "- Claude API: summaries, triage, remarks, and answers\n"
+            "- Gemini API: summaries, triage, remarks, and answers\n"
             "- python-docx: Word meeting-minutes output\n"
             "- fpdf2: PDF document generation\n"
             "- PyMuPDF: PDF reading and previews"
@@ -164,4 +164,4 @@ else:
     MODULES[choice].render()
 
 st.divider()
-st.caption("Built with Python · Streamlit · Whisper · Claude API")
+st.caption("Built with Python · Streamlit · Whisper · Gemini API")

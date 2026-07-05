@@ -22,11 +22,11 @@ Fallback: If the app is not open, run `streamlit run app.py` again and start fro
 1. In the sidebar, click **Minutes**.
 2. Click **Use sample audio**.
 3. Use `samples/meeting_sample.wav` if asked for the sample file.
-4. While the spinner runs, say: "This module takes meeting audio, transcribes it with Whisper, asks Claude for structured minutes, and creates a Word document."
+4. While the spinner runs, say: "This module takes meeting audio, transcribes it with Whisper, asks Gemini for structured minutes, and creates a Word document."
 5. When results appear, show the title, summary bullets, decisions, action items, elapsed seconds, and **Download Word document** button.
 6. Say: "The manual version is listening to the whole recording, writing minutes, and formatting the document. Here it is one click."
 
-Fallback: If transcription or Claude fails, turn **Demo Mode** ON in the sidebar, stay on **Minutes**, click **Use sample audio** again, and say: "I am switching to cached demo output, which is the planned Wi-Fi failure fallback."
+Fallback: If transcription or Gemini fails, turn **Demo Mode** ON in the sidebar, stay on **Minutes**, click **Use sample audio** again, and say: "I am switching to cached demo output, which is the planned Wi-Fi failure fallback."
 
 ## 2:20-3:45 — Module 2: Inbox Triage
 

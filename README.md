@@ -12,7 +12,7 @@ It answers questions from office PDFs with page citations.
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-Set-Content .env "ANTHROPIC_API_KEY=sk-..."
+Set-Content .env "GEMINI_API_KEY=your_google_ai_studio_key"
 streamlit run app.py
 ```
 

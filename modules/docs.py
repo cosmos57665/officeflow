@@ -1,4 +1,4 @@
-"""Module 3: Docs — CSV of students → batched Claude remarks → per-student PDFs → zip."""
+"""Module 3: Docs — CSV of students → batched Gemini remarks → per-student PDFs → zip."""
 import io
 import json
 import re
@@ -73,7 +73,7 @@ def _get_remarks(df, doc_type: str, demo: bool):
     else:
         rows = df[REQUIRED].to_dict(orient="records")
         try:
-            with st.spinner(f"Writing {len(rows)} personalized remarks with Claude (one batched call)..."):
+            with st.spinner(f"Writing {len(rows)} personalized remarks with Gemini (one batched call)..."):
                 cached = llm.ask_claude_json(
                     REMARKS_SYSTEM.format(doc_type=doc_type),
                     json.dumps(rows, ensure_ascii=False),

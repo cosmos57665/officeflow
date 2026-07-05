@@ -49,13 +49,13 @@ def _generate(audio_path: Path):
         st.error("No speech was detected in the audio file.")
         return None
     try:
-        with st.spinner("Extracting minutes with Claude..."):
+        with st.spinner("Extracting minutes with Gemini..."):
             data = llm.ask_claude_json(EXTRACT_SYSTEM, transcript, 2000)
     except llm.LLMError as exc:
         st.error(str(exc))
         return None
     if not isinstance(data, dict):
-        st.error("Claude returned an unexpected format. Please try again.")
+        st.error("Gemini returned an unexpected format. Please try again.")
         return None
     return data
 

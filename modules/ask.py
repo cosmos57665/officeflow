@@ -99,7 +99,7 @@ def _ask_document(question: str, demo: bool):
         context = _build_document_context(pages)
         user = f"Document:\n{context}\n\nQuestion: {question}"
         try:
-            with st.spinner("Searching the document with Claude..."):
+            with st.spinner("Searching the document with Gemini..."):
                 answer = llm.ask_claude(ASK_SYSTEM, user, max_tokens=1200)
         except llm.LLMError as exc:
             st.error(str(exc))
@@ -143,7 +143,7 @@ def render():
         if pages:
             _show_loaded(pages)
         elif demo:
-            st.caption("Demo Mode: ask a cached sample question without calling Claude.")
+            st.caption("Demo Mode: ask a cached sample question without calling Gemini.")
         else:
             st.info("Upload a PDF to begin.")
 
