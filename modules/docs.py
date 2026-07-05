@@ -143,6 +143,7 @@ def _run(df, doc_type: str, demo: bool):
 
 def _show(result: dict):
     n, elapsed = result["count"], result["elapsed"]
+    st.markdown("<div class='of-section-label'>Generated documents</div>", unsafe_allow_html=True)
     st.success(f"Generated {n} documents in {elapsed:.1f} seconds — "
                f"manual equivalent: ~{n * 5} minutes.")
     st.download_button(f"Download all {n} PDFs (zip)", result["zip"],
@@ -154,28 +155,32 @@ def _show(result: dict):
 
 
 def render():
-    st.header("Bulk Document Generator")
-    st.caption("Upload a student CSV and generate a personalized PDF for every row in one go.")
+    st.markdown(
+        "<div class='of-module-head'><div class='of-topline'>Module 03</div>"
+        "<h1>Bulk Document Generator</h1><p>Upload a CSV and generate personalized PDFs in one run.</p></div>",
+        unsafe_allow_html=True,
+    )
     demo = bool(st.session_state.get("demo_mode"))
 
-    uploaded = st.file_uploader("Student CSV (columns: name, class, marks, achievement)", type=["csv"])
-    df = None
-    if uploaded is not None:
-        df = _read_csv(uploaded)
-    elif demo and SAMPLE_CSV.exists():
-        df = _read_csv(SAMPLE_CSV)
+    with st.container(border=True):
+        st.markdown("<div class='of-section-label'>Input</div>", unsafe_allow_html=True)
+        uploaded = st.file_uploader("Student CSV (columns: name, class, marks, achievement)", type=["csv"])
+        df = None
+        if uploaded is not None:
+            df = _read_csv(uploaded)
+        elif demo and SAMPLE_CSV.exists():
+            df = _read_csv(SAMPLE_CSV)
+            if df is not None:
+                st.caption("Demo Mode: using samples/students.csv")
         if df is not None:
-            st.caption("Demo Mode: using samples/students.csv")
-    if df is not None:
-        st.dataframe(df, hide_index=True, width="stretch")
+            st.dataframe(df, hide_index=True, width="stretch")
+        doc_type = st.selectbox("Document type", list(DOC_TYPES.keys()))
 
-    doc_type = st.selectbox("Document type", list(DOC_TYPES.keys()))
-
-    if st.button("Generate All", type="primary"):
-        if df is None:
-            st.warning("Please upload a CSV file first.")
-        else:
-            _run(df, doc_type, demo)
+        if st.button("Generate All", type="primary"):
+            if df is None:
+                st.warning("Please upload a CSV file first.")
+            else:
+                _run(df, doc_type, demo)
 
     result = st.session_state.get("docs_result")
     if result:

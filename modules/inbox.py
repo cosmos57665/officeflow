@@ -105,13 +105,14 @@ def _card(email: dict):
 def _show(result: dict):
     emails, elapsed = result["emails"], result["elapsed"]
     replies = sum(1 for e in emails if e["suggested_reply"])
+    st.markdown("<div class='of-section-label'>Triaged inbox</div>", unsafe_allow_html=True)
     st.success(f"{len(emails)} emails triaged and {replies} replies drafted "
                f"in {elapsed:.1f} seconds.")
     columns = st.columns(len(CATEGORIES))
     for col, category in zip(columns, CATEGORIES):
         with col:
-            st.markdown(f"### {STYLES[category]}")
             bucket = [e for e in emails if e["category"] == category]
+            st.markdown(f"### {STYLES[category]} · {len(bucket)}")
             if not bucket:
                 st.caption("No emails in this category.")
             for email in bucket:
@@ -119,22 +120,25 @@ def _show(result: dict):
 
 
 def render():
-    st.header("Inbox Triage")
-    st.caption("Paste raw emails and let Claude sort them into Urgent / Action Needed / FYI "
-               "with ready-to-send replies.")
+    st.markdown(
+        "<div class='of-module-head'><div class='of-topline'>Module 02</div>"
+        "<h1>Inbox Triage</h1><p>Paste raw emails and get priority buckets with draft replies.</p></div>",
+        unsafe_allow_html=True,
+    )
     demo = bool(st.session_state.get("demo_mode"))
 
-    st.text_area("Paste raw emails (separate with ---)", key="inbox_text", height=220)
-    st.button("Load sample emails", on_click=_load_sample)
+    with st.container(border=True):
+        st.markdown("<div class='of-section-label'>Input</div>", unsafe_allow_html=True)
+        st.text_area("Paste raw emails (separate with ---)", key="inbox_text", height=220)
+        st.button("Load sample emails", on_click=_load_sample)
+        if st.button("Triage Inbox", type="primary"):
+            text = st.session_state.get("inbox_text", "")
+            if not text.strip():
+                st.warning("Please paste some emails first (or click 'Load sample emails').")
+            else:
+                _triage(text, demo)
     if st.session_state.pop("inbox_load_error", False):
         st.error("Sample file not found (samples/emails.txt).")
-
-    if st.button("Triage Inbox", type="primary"):
-        text = st.session_state.get("inbox_text", "")
-        if not text.strip():
-            st.warning("Please paste some emails first (or click 'Load sample emails').")
-        else:
-            _triage(text, demo)
 
     result = st.session_state.get("inbox_result")
     if result:

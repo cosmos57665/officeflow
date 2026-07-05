@@ -93,51 +93,59 @@ def _run(audio_path, demo: bool):
 
 def _show(result: dict):
     data = result["data"]
-    st.subheader(str(data.get("title", "Meeting Minutes")))
-    attendees = ", ".join(str(a) for a in data.get("attendees") or []) or "Not specified"
-    st.caption(f"Date: {data.get('date', 'Not specified')}  ·  Attendees: {attendees}")
+    st.markdown("<div class='of-section-label'>Generated minutes</div>", unsafe_allow_html=True)
+    result_box = st.container(border=True)
+    with result_box:
+        st.subheader(str(data.get("title", "Meeting Minutes")))
+        attendees = ", ".join(str(a) for a in data.get("attendees") or []) or "Not specified"
+        st.caption(f"Date: {data.get('date', 'Not specified')}  ·  Attendees: {attendees}")
 
-    st.markdown("#### Summary")
-    for bullet in data.get("summary") or ["No summary available."]:
-        st.markdown(f"- {bullet}")
+        st.markdown("#### Summary")
+        for bullet in data.get("summary") or ["No summary available."]:
+            st.markdown(f"- {bullet}")
 
-    st.markdown("#### Decisions")
-    decisions = data.get("decisions") or []
-    if decisions:
-        for decision in decisions:
-            st.markdown(f"- {decision}")
-    else:
-        st.markdown("_No decisions recorded._")
+        st.markdown("#### Decisions")
+        decisions = data.get("decisions") or []
+        if decisions:
+            for decision in decisions:
+                st.markdown(f"- {decision}")
+        else:
+            st.markdown("_No decisions recorded._")
 
-    st.markdown("#### Action Items")
-    items = data.get("action_items") or []
-    if items:
-        table = pd.DataFrame(
-            [{"Task": i.get("task", ""), "Owner": i.get("owner", ""),
-              "Deadline": i.get("deadline", "")} for i in items if isinstance(i, dict)]
+        st.markdown("#### Action Items")
+        items = data.get("action_items") or []
+        if items:
+            table = pd.DataFrame(
+                [{"Task": i.get("task", ""), "Owner": i.get("owner", ""),
+                  "Deadline": i.get("deadline", "")} for i in items if isinstance(i, dict)]
+            )
+            st.dataframe(table, hide_index=True, width="stretch")
+        else:
+            st.markdown("_No action items recorded._")
+
+        st.success(f"Done in {result['elapsed']:.1f} seconds — manual equivalent: ~30 minutes.")
+        st.download_button(
+            "Download Word document",
+            result["docx_bytes"],
+            file_name=result["docx_name"],
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         )
-        st.dataframe(table, hide_index=True, width="stretch")
-    else:
-        st.markdown("_No action items recorded._")
-
-    st.success(f"Done in {result['elapsed']:.1f} seconds — manual equivalent: ~30 minutes.")
-    st.download_button(
-        "Download Word document",
-        result["docx_bytes"],
-        file_name=result["docx_name"],
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    )
 
 
 def render():
-    st.header("Meeting Minutes")
-    st.caption("Upload a meeting recording and get formatted Word minutes in seconds.")
+    st.markdown(
+        "<div class='of-module-head'><div class='of-topline'>Module 01</div>"
+        "<h1>Meeting Minutes</h1><p>Upload audio and generate structured Word minutes.</p></div>",
+        unsafe_allow_html=True,
+    )
     demo = bool(st.session_state.get("demo_mode"))
 
-    uploaded = st.file_uploader("Meeting audio", type=["mp3", "wav", "m4a"])
-    col1, col2 = st.columns(2)
-    generate_clicked = col1.button("Generate Minutes", type="primary")
-    sample_clicked = col2.button("Use sample audio")
+    with st.container(border=True):
+        st.markdown("<div class='of-section-label'>Input</div>", unsafe_allow_html=True)
+        uploaded = st.file_uploader("Meeting audio", type=["mp3", "wav", "m4a"])
+        col1, col2 = st.columns(2)
+        generate_clicked = col1.button("Generate Minutes", type="primary")
+        sample_clicked = col2.button("Use sample audio")
 
     if generate_clicked:
         if demo:

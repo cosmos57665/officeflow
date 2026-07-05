@@ -126,22 +126,28 @@ def _render_history():
 
 
 def render():
-    st.header("Ask PDF")
-    st.caption("Upload a PDF, then ask questions that must be answered only from the document.")
+    st.markdown(
+        "<div class='of-module-head'><div class='of-topline'>Module 04</div>"
+        "<h1>Ask PDF</h1><p>Load a policy PDF and ask cited questions from the document.</p></div>",
+        unsafe_allow_html=True,
+    )
     demo = bool(st.session_state.get("demo_mode"))
 
-    uploaded = st.file_uploader("Policy or office PDF", type=["pdf"])
-    if uploaded is not None and uploaded.name != st.session_state.get("ask_pdf_name"):
-        _load_pdf(uploaded)
+    with st.container(border=True):
+        st.markdown("<div class='of-section-label'>Document</div>", unsafe_allow_html=True)
+        uploaded = st.file_uploader("Policy or office PDF", type=["pdf"])
+        if uploaded is not None and uploaded.name != st.session_state.get("ask_pdf_name"):
+            _load_pdf(uploaded)
 
-    pages = st.session_state.get("ask_pages", [])
-    if pages:
-        _show_loaded(pages)
-    elif demo:
-        st.caption("Demo Mode: ask a cached sample question without calling Claude.")
-    else:
-        st.info("Upload a PDF to begin.")
+        pages = st.session_state.get("ask_pages", [])
+        if pages:
+            _show_loaded(pages)
+        elif demo:
+            st.caption("Demo Mode: ask a cached sample question without calling Claude.")
+        else:
+            st.info("Upload a PDF to begin.")
 
+    st.markdown("<div class='of-section-label'>Question and answer</div>", unsafe_allow_html=True)
     _render_history()
 
     question = st.chat_input("Ask a question about the PDF")
