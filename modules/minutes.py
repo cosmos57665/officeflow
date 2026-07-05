@@ -10,9 +10,10 @@ import streamlit as st
 
 from lib import docgen, llm, transcribe
 
-SAMPLE_AUDIO = Path("samples/meeting_sample.mp3")
+SAMPLE_AUDIO = Path("samples/meeting_sample.wav")
 CACHE_JSON = Path("cache/minutes_sample.json")
 OUTPUT_DIR = Path("outputs")
+ALLOWED_AUDIO = {".mp3", ".wav", ".m4a"}
 
 EXTRACT_SYSTEM = """You extract meeting minutes from a raw meeting transcript.
 Return JSON with exactly these keys:
@@ -145,9 +146,16 @@ def render():
             st.warning("Please upload an audio file first (mp3, wav or m4a).")
         else:
             suffix = Path(uploaded.name).suffix or ".mp3"
+            if suffix.lower() not in ALLOWED_AUDIO:
+                st.error("Please upload an audio file in mp3, wav or m4a format.")
+                return
+            audio_bytes = uploaded.getbuffer()
+            if not audio_bytes:
+                st.error("The uploaded audio file is empty. Please choose a recording with speech.")
+                return
             tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
             try:
-                tmp.write(uploaded.getbuffer())
+                tmp.write(audio_bytes)
                 tmp.close()
                 _run(Path(tmp.name), demo=False)
             finally:
@@ -156,7 +164,7 @@ def render():
         if demo:
             _run(None, demo=True)
         elif not SAMPLE_AUDIO.exists():
-            st.error("Sample audio is missing (samples/meeting_sample.mp3). Add it or use Demo Mode.")
+            st.error("Sample audio is missing (samples/meeting_sample.wav). Add it or use Demo Mode.")
         else:
             _run(SAMPLE_AUDIO, demo=False)
 

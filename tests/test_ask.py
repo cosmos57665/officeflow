@@ -1,6 +1,8 @@
 import unittest
+from contextlib import nullcontext
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import Mock, patch
 
 from fpdf import FPDF
 
@@ -56,6 +58,23 @@ class AskDemoTests(unittest.TestCase):
         answers = {"annual leave": "Annual leave answer."}
 
         self.assertIsNone(ask._find_demo_answer("Who approves travel?", answers))
+
+    def test_demo_question_uses_cache_without_loaded_pdf(self):
+        session_state = {}
+        with TemporaryDirectory() as tmp:
+            cache_path = Path(tmp) / "ask_sample.json"
+            cache_path.write_text('{"annual leave": "Annual leave answer."}', encoding="utf-8")
+            with patch.object(ask, "CACHE_JSON", cache_path), patch.multiple(
+                ask.st,
+                session_state=session_state,
+                spinner=Mock(return_value=nullcontext()),
+                error=Mock(),
+                info=Mock(),
+            ):
+                ask._ask_document("What is the annual leave policy?", demo=True)
+
+        self.assertEqual(session_state["ask_chat"][0]["answer"], "Annual leave answer.")
+        self.assertIn("elapsed", session_state["ask_chat"][0])
 
 
 if __name__ == "__main__":

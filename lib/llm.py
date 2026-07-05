@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MODEL = "claude-sonnet-4-6"
+DEMO_HINT = "For the live demo, you can turn on Demo Mode in the sidebar."
 
 
 class LLMError(Exception):
@@ -23,7 +24,8 @@ def _get_client() -> Anthropic:
         key = os.getenv("ANTHROPIC_API_KEY")
         if not key or key == "your_key_here":
             raise LLMError(
-                "Anthropic API key is missing. Add ANTHROPIC_API_KEY=sk-... to the .env file."
+                "Anthropic API key is missing. Add ANTHROPIC_API_KEY=sk-... "
+                f"to the .env file. {DEMO_HINT}"
             )
         _client = Anthropic(api_key=key)
     return _client
@@ -43,11 +45,11 @@ def ask_claude(system: str, user: str, max_tokens: int = 2000) -> str:
     except Exception as exc:
         raise LLMError(
             f"Claude request failed ({type(exc).__name__}). "
-            "Check your internet connection and API key, then try again."
+            f"Check your internet connection and API key, then try again. {DEMO_HINT}"
         ) from exc
     text = "".join(block.text for block in response.content if block.type == "text")
     if not text.strip():
-        raise LLMError("Claude returned an empty response. Please try again.")
+        raise LLMError(f"Claude returned an empty response. Please try again. {DEMO_HINT}")
     return text
 
 
@@ -72,5 +74,6 @@ def ask_claude_json(system: str, user: str, max_tokens: int = 2000):
         return json.loads(_strip_fences(raw))
     except json.JSONDecodeError as exc:
         raise LLMError(
-            "Claude returned data that could not be parsed as JSON. Please try again."
+            "Claude returned data that could not be parsed as JSON. "
+            f"Please try again. {DEMO_HINT}"
         ) from exc

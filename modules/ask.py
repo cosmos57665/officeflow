@@ -138,7 +138,7 @@ def render():
     if pages:
         _show_loaded(pages)
     elif demo:
-        st.caption("Demo Mode: upload samples/policy.pdf, then ask a cached sample question.")
+        st.caption("Demo Mode: ask a cached sample question without calling Claude.")
     else:
         st.info("Upload a PDF to begin.")
 
@@ -146,7 +146,10 @@ def render():
 
     question = st.chat_input("Ask a question about the PDF")
     if question:
-        if not pages:
+        question = question.strip()
+        if not question:
+            st.warning("Please type a question first.")
+        elif not pages and not demo:
             st.warning("Please upload a PDF first.")
         else:
             st.session_state.setdefault("ask_chat", []).append(

@@ -34,6 +34,9 @@ grounded only in that student's marks and achievement. Never invent facts."""
 
 def _read_csv(uploaded):
     """Parse and validate the uploaded CSV. Returns a DataFrame or None."""
+    if Path(getattr(uploaded, "name", "")).suffix.lower() != ".csv":
+        st.error("Please upload a CSV file.")
+        return None
     try:
         df = pd.read_csv(uploaded)
     except Exception:

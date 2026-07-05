@@ -12,9 +12,9 @@ CACHE_JSON = Path("cache/inbox_sample.json")
 
 CATEGORIES = ["Urgent", "Action Needed", "FYI"]
 STYLES = {
-    "Urgent": ":red[🔴 Urgent]",
-    "Action Needed": ":orange[🟠 Action Needed]",
-    "FYI": ":grey[⚪ FYI]",
+    "Urgent": "Urgent",
+    "Action Needed": "Action Needed",
+    "FYI": "FYI",
 }
 
 TRIAGE_SYSTEM = """You are an executive assistant triaging an office inbox.
