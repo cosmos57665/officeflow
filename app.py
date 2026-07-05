@@ -1,9 +1,11 @@
 """OfficeFlow — Streamlit entry point: branding, navigation, module routing."""
 import streamlit as st
 
+from lib import transcribe
 from modules import ask, docs, inbox, minutes
 
 st.set_page_config(page_title="OfficeFlow", layout="wide")
+transcribe.preload_model_background()
 
 ACCENT = "#0F766E"
 
