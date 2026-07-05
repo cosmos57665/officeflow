@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from lib import docgen, llm, transcribe
+from lib import cloud_config, docgen, llm, transcribe
 
 SAMPLE_AUDIO = Path("samples/meeting_sample.wav")
 CACHE_JSON = Path("cache/minutes_sample.json")
@@ -73,9 +73,15 @@ def _make_docx(data: dict):
         return None
 
 
-def _run(audio_path, demo: bool):
+def _run(audio_path, demo: bool, live_allowed: bool = True):
     """Full flow for one click: get data, build docx, store result for rendering."""
     start = time.perf_counter()
+    if not demo and not live_allowed:
+        st.warning(
+            "Live audio transcription is disabled on the public Streamlit Cloud demo. "
+            "Turn Demo Mode on to use the cached minutes output."
+        )
+        return
     data = _load_cache() if demo else _generate(audio_path)
     if data is None:
         return
@@ -139,9 +145,14 @@ def render():
         unsafe_allow_html=True,
     )
     demo = bool(st.session_state.get("demo_mode"))
+    live_allowed = cloud_config.live_minutes_enabled()
     if demo:
         st.caption(
             "Meeting Minutes uses cached demo output on Streamlit Community Cloud so Whisper does not load on the free tier."
+        )
+    elif not live_allowed:
+        st.caption(
+            "Live audio transcription is disabled on this public deployment to avoid Streamlit Cloud memory crashes."
         )
 
     with st.container(border=True):
@@ -154,6 +165,8 @@ def render():
     if generate_clicked:
         if demo:
             _run(None, demo=True)
+        elif not live_allowed:
+            _run(None, demo=False, live_allowed=False)
         elif uploaded is None:
             st.warning("Please upload an audio file first (mp3, wav or m4a).")
         else:
@@ -169,16 +182,18 @@ def render():
             try:
                 tmp.write(audio_bytes)
                 tmp.close()
-                _run(Path(tmp.name), demo=False)
+                _run(Path(tmp.name), demo=False, live_allowed=live_allowed)
             finally:
                 Path(tmp.name).unlink(missing_ok=True)
     elif sample_clicked:
         if demo:
             _run(None, demo=True)
+        elif not live_allowed:
+            _run(None, demo=False, live_allowed=False)
         elif not SAMPLE_AUDIO.exists():
             st.error("Sample audio is missing (samples/meeting_sample.wav). Add it or use Demo Mode.")
         else:
-            _run(SAMPLE_AUDIO, demo=False)
+            _run(SAMPLE_AUDIO, demo=False, live_allowed=live_allowed)
 
     result = st.session_state.get("minutes_result")
     if result:

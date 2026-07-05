@@ -18,6 +18,25 @@ class CloudConfigTests(unittest.TestCase):
 
             self.assertFalse(cloud_config.default_demo_mode())
 
+    def test_live_minutes_disabled_when_default_demo_mode_is_on(self):
+        with patch.object(cloud_config, "st") as fake_st:
+            fake_st.secrets = Mock()
+            fake_st.secrets.get.side_effect = lambda name, default=None: {
+                "DEFAULT_DEMO_MODE": "true",
+            }.get(name, default)
+
+            self.assertFalse(cloud_config.live_minutes_enabled())
+
+    def test_live_minutes_can_be_enabled_explicitly(self):
+        with patch.object(cloud_config, "st") as fake_st:
+            fake_st.secrets = Mock()
+            fake_st.secrets.get.side_effect = lambda name, default=None: {
+                "DEFAULT_DEMO_MODE": "true",
+                "ENABLE_LIVE_MINUTES": "true",
+            }.get(name, default)
+
+            self.assertTrue(cloud_config.live_minutes_enabled())
+
 
 if __name__ == "__main__":
     unittest.main()

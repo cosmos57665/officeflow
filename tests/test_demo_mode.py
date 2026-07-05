@@ -42,6 +42,23 @@ class DemoModeOfflineTests(unittest.TestCase):
         self.assertEqual(session_state["minutes_result"]["data"]["title"], "Demo Minutes")
         self.assertGreater(len(session_state["minutes_result"]["docx_bytes"]), 0)
 
+    def test_minutes_live_path_can_be_disabled_without_transcribing(self):
+        session_state = {}
+        warning = Mock()
+        with patch.multiple(
+            minutes.st,
+            session_state=session_state,
+            warning=warning,
+        ), patch.object(minutes.transcribe, "transcribe") as transcribe_audio, patch.object(
+            minutes.llm, "ask_claude_json"
+        ) as ask_json:
+            minutes._run(Path("samples/meeting_sample.wav"), demo=False, live_allowed=False)
+
+        transcribe_audio.assert_not_called()
+        ask_json.assert_not_called()
+        warning.assert_called_once()
+        self.assertNotIn("minutes_result", session_state)
+
     def test_docs_demo_uses_cache_without_llm(self):
         session_state = {}
         df = pd.DataFrame([
