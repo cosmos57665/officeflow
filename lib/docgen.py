@@ -50,7 +50,9 @@ def _latin1(text: str) -> str:
     return str(text).encode("latin-1", "replace").decode("latin-1")
 
 
-def certificate_pdf(name: str, remark: str, out_path):
+def certificate_pdf(name: str, remark: str, out_path,
+                    title: str = "Certificate of Achievement",
+                    subtitle: str = "This certificate is proudly presented to"):
     """Write a clean A4 certificate with border, heading, name, remark and signature line."""
     pdf = FPDF(orientation="P", unit="mm", format="A4")
     pdf.set_auto_page_break(auto=False)
@@ -64,11 +66,11 @@ def certificate_pdf(name: str, remark: str, out_path):
 
     pdf.set_y(55)
     pdf.set_font("Helvetica", "B", 28)
-    pdf.cell(0, 15, "Certificate of Achievement", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 15, _latin1(title), align="C", new_x="LMARGIN", new_y="NEXT")
 
     pdf.ln(14)
     pdf.set_font("Helvetica", "", 13)
-    pdf.cell(0, 8, "This certificate is proudly presented to", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 8, _latin1(subtitle), align="C", new_x="LMARGIN", new_y="NEXT")
 
     pdf.ln(8)
     pdf.set_font("Helvetica", "B", 34)
