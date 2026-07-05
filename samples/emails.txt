@@ -1,0 +1,96 @@
+From: priya.nair@apexsupplies.example.com
+Subject: URGENT: Defective toner cartridges in order #4471 — production halted
+
+Dear Team,
+
+We received order #4471 this morning and 18 of the 24 toner cartridges are leaking. Our print room has had to stop all client jobs, and we have a court-filing deadline at 4 PM today. We need replacements couriered over immediately or an authorization to purchase locally at your cost. Please treat this as critical — this is the second quality issue this quarter and we will have to review the contract if it is not resolved today.
+
+Priya Nair
+Procurement Head, Apex Supplies Pvt. Ltd.
+
+---
+
+From: daniel.okafor@brightline.example.com
+Subject: Escalation: Phase 2 deliverables slipping — need a call TODAY
+
+Hello,
+
+I am escalating this directly because my last two emails to the project inbox went unanswered. The Phase 2 wireframes were due Monday and we still have nothing, which puts our board demo on Friday at serious risk. If we cannot get a firm delivery commitment on a call today, I will have to inform our steering committee that the timeline is compromised. Please send me two time slots before 6 PM.
+
+Regards,
+Daniel Okafor
+VP Operations, Brightline Media
+
+---
+
+From: meera.iyer@officeflow-corp.example.com
+Subject: Request to reschedule Thursday's quarterly review
+
+Hi,
+
+The finance team has a statutory audit visit on Thursday morning, so I'd like to move our quarterly review from Thursday 10 AM to either Friday 11 AM or Monday 2 PM. Could you confirm which slot works and update the calendar invite? The agenda and slide deck stay the same.
+
+Thanks,
+Meera Iyer
+Finance Manager
+
+---
+
+From: accounts@velocitylogistics.example.com
+Subject: Query on invoice INV-2093 — mismatch of ₹12,400
+
+Dear Sir/Madam,
+
+Invoice INV-2093 dated 18 June shows a total of ₹87,600, but our purchase order PO-5521 was approved for ₹75,200. The difference appears to be a "peak season surcharge" line item that was not in the quotation. Please review and either share the approval reference for the surcharge or issue a revised invoice so we can process payment this cycle.
+
+Regards,
+Accounts Payable Team
+Velocity Logistics
+
+---
+
+From: rahul.menon@officeflow-corp.example.com
+Subject: Leave application: 14–18 July (5 working days)
+
+Hi,
+
+I would like to apply for leave from 14 to 18 July for a family function out of town. Anita has agreed to cover the helpdesk roster during that week, and I will complete the pending ticket handover notes before I leave. Kindly approve at your convenience so I can confirm travel bookings.
+
+Thanks,
+Rahul Menon
+IT Support
+
+---
+
+From: newsletter@worksmart-digest.example.com
+Subject: WorkSmart Weekly: 5 automation trends shaping offices in 2026
+
+Hello Reader,
+
+This week's digest: (1) AI meeting assistants go mainstream, (2) how mid-size firms are cutting paperwork by 40%, (3) a comparison of top document automation tools, (4) upcoming webinar on inbox zero strategies, and (5) reader poll results on hybrid work. Read the full issue on our site. You are receiving this because you subscribed to WorkSmart Digest.
+
+The WorkSmart Team
+
+---
+
+From: it-helpdesk@officeflow-corp.example.com
+Subject: Notice: Email server maintenance this Saturday 10 PM – 2 AM
+
+Dear All,
+
+The email server will be down for scheduled maintenance this Saturday from 10 PM to 2 AM IST. During this window, incoming mail will be queued and delivered once service resumes; no messages will be lost. No action is required from your side. Please plan any late-night sends accordingly.
+
+IT Helpdesk
+
+---
+
+From: sunita.rao@officeflow-corp.example.com
+Subject: FYI: June facilities utilization report attached
+
+Hi Team,
+
+Sharing the June facilities report for your records. Highlights: meeting room utilization at 72% (up 6% from May), cafeteria footfall steady, and the third-floor printer replacement completed under budget. No action needed — this is for your information ahead of next month's planning cycle.
+
+Best,
+Sunita Rao
+Admin & Facilities
