@@ -1,11 +1,10 @@
 """OfficeFlow — Streamlit entry point: branding, navigation, module routing."""
 import streamlit as st
 
-from lib import transcribe
+from lib import cloud_config
 from modules import ask, docs, inbox, minutes
 
 st.set_page_config(page_title="OfficeFlow", layout="wide")
-transcribe.preload_model_background()
 
 ACCENT = "#0F766E"
 
@@ -141,7 +140,9 @@ with st.sidebar:
     st.title("OfficeFlow")
     st.caption("AI Office Automation Suite")
     choice = st.radio("Navigation", ["Home", *MODULES.keys()])
-    st.toggle("Demo Mode", key="demo_mode")
+    st.toggle("Demo Mode", key="demo_mode", value=cloud_config.default_demo_mode())
+    if st.session_state.get("demo_mode"):
+        st.caption("Demo mode — showing cached results. Live AI runs in the presentation.")
     st.markdown(
         "<div class='of-demo-note'>Demo Mode is the safety switch: cached outputs keep the presentation moving without API or Wi-Fi.</div>",
         unsafe_allow_html=True,

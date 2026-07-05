@@ -2,10 +2,9 @@
 import json
 import os
 
+import streamlit as st
 from anthropic import Anthropic
 from dotenv import load_dotenv
-
-load_dotenv()
 
 MODEL = "claude-sonnet-4-6"
 DEMO_HINT = "For the live demo, you can turn on Demo Mode in the sidebar."
@@ -18,14 +17,25 @@ class LLMError(Exception):
 _client = None
 
 
+def _load_api_key() -> str | None:
+    try:
+        key = st.secrets["ANTHROPIC_API_KEY"]
+        if key:
+            return str(key)
+    except Exception:
+        pass
+    load_dotenv()
+    return os.getenv("ANTHROPIC_API_KEY")
+
+
 def _get_client() -> Anthropic:
     global _client
     if _client is None:
-        key = os.getenv("ANTHROPIC_API_KEY")
+        key = _load_api_key()
         if not key or key == "your_key_here":
             raise LLMError(
-                "Anthropic API key is missing. Add ANTHROPIC_API_KEY=sk-... "
-                f"to the .env file. {DEMO_HINT}"
+                "Anthropic API key is missing. Add ANTHROPIC_API_KEY in "
+                f"Streamlit secrets or your local .env file. {DEMO_HINT}"
             )
         _client = Anthropic(api_key=key)
     return _client

@@ -139,6 +139,10 @@ def render():
         unsafe_allow_html=True,
     )
     demo = bool(st.session_state.get("demo_mode"))
+    if demo:
+        st.caption(
+            "Meeting Minutes uses cached demo output on Streamlit Community Cloud so Whisper does not load on the free tier."
+        )
 
     with st.container(border=True):
         st.markdown("<div class='of-section-label'>Input</div>", unsafe_allow_html=True)
