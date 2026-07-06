@@ -1,10 +1,17 @@
-"""faster-whisper wrapper. The model is loaded once so repeat runs are fast."""
+"""Speech-to-text wrapper with Groq cloud first and local Whisper fallback."""
+import os
 import threading
+from pathlib import Path
+
+import httpx
+from dotenv import load_dotenv
 
 _model = None
 _model_lock = threading.Lock()
 _preload_thread = None
 _preload_started = False
+GROQ_TRANSCRIBE_MODEL = "whisper-large-v3-turbo"
+GROQ_TRANSCRIBE_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 
 
 def _get_model(local_files_only: bool = False):
@@ -49,7 +56,45 @@ def preload_model_background():
     return _preload_thread
 
 
-def transcribe(audio_path) -> str:
-    """Transcribe an audio file and return the full text."""
+def _groq_key() -> str | None:
+    load_dotenv()
+    return os.getenv("GROQ_API_KEY")
+
+
+def _transcribe_local(audio_path) -> str:
     segments, _info = _get_model().transcribe(str(audio_path))
     return " ".join(segment.text.strip() for segment in segments).strip()
+
+
+def _transcribe_groq(audio_path) -> str:
+    key = _groq_key()
+    if not key:
+        raise RuntimeError("GROQ_API_KEY is not configured.")
+    path = Path(audio_path)
+    with path.open("rb") as audio:
+        response = httpx.post(
+            GROQ_TRANSCRIBE_URL,
+            headers={"Authorization": f"Bearer {key}"},
+            data={"model": GROQ_TRANSCRIBE_MODEL, "response_format": "json"},
+            files={"file": (path.name, audio, "application/octet-stream")},
+            timeout=180,
+        )
+    response.raise_for_status()
+    text = response.json().get("text", "")
+    if not str(text).strip():
+        raise RuntimeError("Groq returned an empty transcript.")
+    return str(text).strip()
+
+
+def transcribe(audio_path) -> str:
+    """Transcribe an audio file and return the full text.
+
+    Groq is tried first when GROQ_API_KEY is configured because it is much
+    faster for long meetings. Local faster-whisper remains the offline fallback.
+    """
+    if _groq_key():
+        try:
+            return _transcribe_groq(audio_path)
+        except Exception:
+            pass
+    return _transcribe_local(audio_path)

@@ -38,6 +38,25 @@ class WhisperPreloadTests(unittest.TestCase):
 
         get_model.assert_called_once_with(local_files_only=True)
 
+    def test_transcribe_uses_groq_when_key_exists(self):
+        with patch.object(transcribe, "_groq_key", return_value="key"), patch.object(
+            transcribe, "_transcribe_groq", return_value="cloud transcript"
+        ) as groq, patch.object(transcribe, "_transcribe_local") as local:
+            result = transcribe.transcribe("meeting.wav")
+
+        self.assertEqual(result, "cloud transcript")
+        groq.assert_called_once_with("meeting.wav")
+        local.assert_not_called()
+
+    def test_transcribe_falls_back_to_local_when_groq_fails(self):
+        with patch.object(transcribe, "_groq_key", return_value="key"), patch.object(
+            transcribe, "_transcribe_groq", side_effect=RuntimeError("down")
+        ), patch.object(transcribe, "_transcribe_local", return_value="local transcript") as local:
+            result = transcribe.transcribe("meeting.wav")
+
+        self.assertEqual(result, "local transcript")
+        local.assert_called_once_with("meeting.wav")
+
 
 if __name__ == "__main__":
     unittest.main()
