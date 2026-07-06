@@ -14,14 +14,24 @@ if (!(Test-Path $Python)) {
 }
 
 $BackendLog = Join-Path $Outputs "backend.log"
+$BackendErr = Join-Path $Outputs "backend.err.log"
 $FrontendLog = Join-Path $Outputs "frontend.log"
+$FrontendErr = Join-Path $Outputs "frontend.err.log"
 
-$BackendCommand = "Set-Location `"$Root`"; & `"$Python`" -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 *> `"$BackendLog`""
-$FrontendCommand = "Set-Location `"$Frontend`"; npm run dev *> `"$FrontendLog`""
-
-Start-Process powershell -WindowStyle Hidden -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", $BackendCommand
+Start-Process -FilePath $Python `
+    -ArgumentList @("-m", "uvicorn", "backend.main:app", "--host", "127.0.0.1", "--port", "8000") `
+    -WorkingDirectory $Root `
+    -RedirectStandardOutput $BackendLog `
+    -RedirectStandardError $BackendErr `
+    -WindowStyle Hidden
 Start-Sleep -Seconds 2
-Start-Process powershell -WindowStyle Hidden -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", $FrontendCommand
+$Npm = "npm.cmd"
+Start-Process -FilePath $Npm `
+    -ArgumentList @("run", "dev") `
+    -WorkingDirectory $Frontend `
+    -RedirectStandardOutput $FrontendLog `
+    -RedirectStandardError $FrontendErr `
+    -WindowStyle Hidden
 Start-Sleep -Seconds 3
 
 Start-Process "http://localhost:5173"
