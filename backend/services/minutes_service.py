@@ -61,6 +61,41 @@ def _make_docx(data: dict) -> str:
         raise AppError("Could not create the Word document.", 500) from exc
 
 
+def _string_list(value, fallback: str) -> list[str]:
+    if isinstance(value, list):
+        cleaned = [str(item).strip() for item in value if str(item).strip()]
+        return cleaned or [fallback]
+    if value:
+        return [str(value).strip()]
+    return [fallback]
+
+
+def _action_items(value) -> list[dict]:
+    if not isinstance(value, list):
+        return []
+    cleaned = []
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        cleaned.append({
+            "task": str(item.get("task") or "").strip() or "Not specified",
+            "owner": str(item.get("owner") or "").strip() or "Not specified",
+            "deadline": str(item.get("deadline") or "").strip() or "Not specified",
+        })
+    return cleaned
+
+
+def _clean_minutes(data: dict) -> dict:
+    return {
+        "title": str(data.get("title") or "Meeting Minutes").strip(),
+        "date": str(data.get("date") or "Not specified").strip(),
+        "attendees": _string_list(data.get("attendees"), "Not specified"),
+        "summary": _string_list(data.get("summary"), "No summary available."),
+        "decisions": _string_list(data.get("decisions"), "No decisions recorded."),
+        "action_items": _action_items(data.get("action_items")),
+    }
+
+
 def run(audio_bytes: bytes | None, filename: str | None, use_sample: bool, demo: bool):
     start = time.perf_counter()
     provider = "demo"
@@ -84,6 +119,7 @@ def run(audio_bytes: bytes | None, filename: str | None, use_sample: bool, demo:
                 data, provider = _generate(Path(tmp.name))
             finally:
                 Path(tmp.name).unlink(missing_ok=True)
+    data = _clean_minutes(data)
     return {
         "data": data,
         "elapsed": time.perf_counter() - start,

@@ -52,6 +52,32 @@ def test_minutes_rejects_wrong_file_type():
     assert "audio file" in response.json()["error"]
 
 
+def test_minutes_normalizes_ai_shapes_without_crashing_renderer():
+    dirty = {
+        "title": "Quick Meeting",
+        "date": "Today",
+        "attendees": "Asha",
+        "summary": "One short summary.",
+        "decisions": None,
+        "action_items": [{"task": "Send note"}],
+    }
+    with patch.object(minutes_service, "_generate", return_value=(dirty, "groq")), patch.object(
+        minutes_service, "SAMPLE_AUDIO"
+    ) as sample:
+        sample.exists.return_value = True
+        response = client.post(
+            "/api/minutes",
+            data={"demo": "false", "use_sample": "true"},
+        )
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["attendees"] == ["Asha"]
+    assert data["summary"] == ["One short summary."]
+    assert data["decisions"] == ["No decisions recorded."]
+    assert data["action_items"][0]["owner"] == "Not specified"
+
+
 def test_docs_rejects_missing_columns():
     response = client.post(
         "/api/docs",

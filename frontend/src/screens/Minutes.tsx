@@ -5,6 +5,18 @@ import type { MinutesData } from '../types';
 
 type Result = { data: MinutesData; elapsed: number; provider: string; docx_file_id: string };
 
+function textList(value: unknown, fallback: string) {
+  if (Array.isArray(value)) {
+    const items = value.map((item) => String(item).trim()).filter(Boolean);
+    return items.length ? items : [fallback];
+  }
+  return value ? [String(value)] : [fallback];
+}
+
+function actionItems(value: unknown) {
+  return Array.isArray(value) ? value.filter((item) => item && typeof item === 'object') as NonNullable<MinutesData['action_items']> : [];
+}
+
 export default function Minutes({ demo }: { demo: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -46,12 +58,12 @@ export default function Minutes({ demo }: { demo: boolean }) {
             Date: {result.data.date || 'Not specified'} · Attendees: {(result.data.attendees || []).join(', ') || 'Not specified'}
           </p>
           <h4>Summary</h4>
-          <ul>{(result.data.summary || ['No summary available.']).map((item) => <li key={item}>{item}</li>)}</ul>
+          <ul>{textList(result.data.summary, 'No summary available.').map((item) => <li key={item}>{item}</li>)}</ul>
           <h4>Decisions</h4>
-          <ul>{(result.data.decisions || ['No decisions recorded.']).map((item) => <li key={item}>{item}</li>)}</ul>
+          <ul>{textList(result.data.decisions, 'No decisions recorded.').map((item) => <li key={item}>{item}</li>)}</ul>
           <h4>Action Items</h4>
           <div className="table">
-            {(result.data.action_items || []).map((item, index) => (
+            {actionItems(result.data.action_items).map((item, index) => (
               <div className="row" key={`${item.task}-${index}`}>
                 <span>{item.task || 'Task'}</span><span>{item.owner || 'Owner'}</span><span>{item.deadline || 'Deadline'}</span>
               </div>
