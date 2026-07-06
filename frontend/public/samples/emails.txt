@@ -1,0 +1,14 @@
+From: priya.nair@apexsupplies.example.com
+Subject: URGENT: Defective toner cartridges in order #4471
+
+18 of 24 toner cartridges are leaking and production is halted before a 4 PM deadline.
+---
+From: meera.iyer@officeflow-corp.example.com
+Subject: Request to reschedule Thursday's quarterly review
+
+Finance has a statutory audit on Thursday morning. Can we move the review to Friday 11 AM?
+---
+From: newsletter@worksmart-digest.example.com
+Subject: WorkSmart Weekly
+
+This week's automation trends digest is attached for your records.
