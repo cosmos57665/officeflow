@@ -12,6 +12,11 @@ _preload_thread = None
 _preload_started = False
 GROQ_TRANSCRIBE_MODEL = "whisper-large-v3-turbo"
 GROQ_TRANSCRIBE_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
+DEMO_HINT = "Use a compressed mp3/m4a file for fast live transcription, or turn on Demo Mode."
+
+
+class TranscriptionError(Exception):
+    """Raised when fast transcription fails with a user-safe message."""
 
 
 def _get_model(local_files_only: bool = False):
@@ -79,10 +84,16 @@ def _transcribe_groq(audio_path) -> str:
             files={"file": (path.name, audio, "application/octet-stream")},
             timeout=180,
         )
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        message = f"Groq transcription failed ({response.status_code}). {DEMO_HINT}"
+        if response.status_code == 413:
+            message = f"Audio file is too large for fast Groq transcription. {DEMO_HINT}"
+        raise TranscriptionError(message) from exc
     text = response.json().get("text", "")
     if not str(text).strip():
-        raise RuntimeError("Groq returned an empty transcript.")
+        raise TranscriptionError(f"Groq returned an empty transcript. {DEMO_HINT}")
     return str(text).strip()
 
 
@@ -95,6 +106,8 @@ def transcribe(audio_path) -> str:
     if _groq_key():
         try:
             return _transcribe_groq(audio_path)
-        except Exception:
-            pass
+        except TranscriptionError:
+            raise
+        except Exception as exc:
+            raise TranscriptionError(f"Groq transcription failed. {DEMO_HINT}") from exc
     return _transcribe_local(audio_path)

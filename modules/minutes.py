@@ -42,6 +42,9 @@ def _generate(audio_path: Path):
     try:
         with st.spinner("Transcribing audio... (first run loads the Whisper model)"):
             transcript = transcribe.transcribe(audio_path)
+    except transcribe.TranscriptionError as exc:
+        st.error(str(exc))
+        return None
     except Exception:
         st.error("Could not transcribe this file. Make sure it is a valid mp3, wav or m4a recording.")
         return None

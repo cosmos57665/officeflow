@@ -48,10 +48,19 @@ class WhisperPreloadTests(unittest.TestCase):
         groq.assert_called_once_with("meeting.wav")
         local.assert_not_called()
 
-    def test_transcribe_falls_back_to_local_when_groq_fails(self):
+    def test_transcribe_raises_when_groq_fails_with_key(self):
         with patch.object(transcribe, "_groq_key", return_value="key"), patch.object(
             transcribe, "_transcribe_groq", side_effect=RuntimeError("down")
         ), patch.object(transcribe, "_transcribe_local", return_value="local transcript") as local:
+            with self.assertRaises(transcribe.TranscriptionError):
+                transcribe.transcribe("meeting.wav")
+
+        local.assert_not_called()
+
+    def test_transcribe_uses_local_when_groq_key_missing(self):
+        with patch.object(transcribe, "_groq_key", return_value=None), patch.object(
+            transcribe, "_transcribe_local", return_value="local transcript"
+        ) as local:
             result = transcribe.transcribe("meeting.wav")
 
         self.assertEqual(result, "local transcript")

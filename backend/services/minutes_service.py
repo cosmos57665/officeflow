@@ -36,6 +36,8 @@ def _cache():
 def _generate(audio_path: Path):
     try:
         transcript = transcribe.transcribe(audio_path)
+    except transcribe.TranscriptionError as exc:
+        raise AppError(str(exc), 503) from exc
     except Exception as exc:
         raise AppError("Could not transcribe this audio file.") from exc
     if not transcript:
