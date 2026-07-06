@@ -98,8 +98,18 @@ def _make_pdfs(df, remarks: dict, doc_type: str):
     for i, row in df.iterrows():
         safe = re.sub(r"[^A-Za-z0-9]+", "_", str(row["name"])).strip("_") or "student"
         path = OUTPUT_DIR / f"{i + 1:02d}_{safe}.pdf"
-        docgen.certificate_pdf(str(row["name"]), remarks[row["name"]], path,
-                               title=style["title"], subtitle=style["subtitle"])
+        if doc_type == "Progress Report":
+            docgen.progress_report_pdf(
+                str(row["name"]),
+                str(row["class"]),
+                str(row["marks"]),
+                str(row["achievement"]),
+                remarks[row["name"]],
+                path,
+            )
+        else:
+            docgen.certificate_pdf(str(row["name"]), remarks[row["name"]], path,
+                                   title=style["title"], subtitle=style["subtitle"])
         paths.append(path)
     return paths
 
