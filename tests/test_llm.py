@@ -60,7 +60,7 @@ class LLMFailureMessageTests(unittest.TestCase):
         old_client = llm._client
         llm._client = None
         try:
-            with patch.dict(os.environ, {}, clear=True):
+            with patch.dict(os.environ, {}, clear=True), patch.object(llm, "load_dotenv"):
                 with self.assertRaises(llm.LLMError) as raised:
                     llm._get_client()
         finally:
