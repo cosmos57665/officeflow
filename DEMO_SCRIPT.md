@@ -3,19 +3,20 @@
 ## Before the Demo
 
 - Open a terminal in `D:\Sachin\SACHIN PROJECTS\officeflow`.
-- Run `.\venv\Scripts\streamlit.exe run app.py`.
-- Open the Local URL, usually `http://localhost:8501`.
+- Run `.\start-officeflow.ps1`.
+- Open `http://localhost:5173` if the browser does not open automatically.
 - Keep `samples/` visible in File Explorer.
-- In the sidebar, turn **Demo Mode** ON if Wi-Fi is weak, the API key fails, or you want the safest run.
+- Confirm **Demo Mode** is ON in the sidebar for the safest run.
+- Streamlit fallback: `.\venv\Scripts\streamlit.exe run app.py`, then open `http://localhost:8501`.
 
 ## 0:00-0:45 — Opening
 
 1. Show the Home page.
-2. Say: "OfficeFlow is an AI office automation suite with four practical workflows: meeting minutes, inbox triage, bulk documents, and PDF Q&A."
+2. Say: "OfficeFlow is a full-stack AI office automation suite with four practical workflows: meeting minutes, inbox triage, bulk documents, and PDF Q&A."
 3. Point to the sidebar **Demo Mode** toggle.
 4. Say: "This switch is my reliability fallback. If Wi-Fi or the API fails, cached outputs keep the demo moving without a crash."
 
-Fallback: If the app is not open, run `streamlit run app.py` again and start from the Home page. If the browser is slow, refresh once.
+Fallback: If the React app is not open, run `.\start-officeflow.ps1` again. If that fails, use the Streamlit fallback command above.
 
 ## 0:45-2:20 — Module 1: Meeting Minutes
 
