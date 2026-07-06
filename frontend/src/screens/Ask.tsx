@@ -55,7 +55,14 @@ export default function Ask({ demo }: { demo: boolean }) {
         {demo ? <p className="hint">Demo Mode can answer cached sample questions without loading a PDF.</p> : null}
       </Panel>
       <Panel title="Question">
-        <input value={question} onChange={(event) => setQuestion(event.target.value)} />
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void ask();
+          }}
+        >
+          <input value={question} onChange={(event) => setQuestion(event.target.value)} />
+        </form>
         <div className="actions">
           <PrimaryButton busy={busy} onClick={ask}>Ask Question</PrimaryButton>
         </div>

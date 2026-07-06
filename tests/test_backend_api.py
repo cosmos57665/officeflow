@@ -30,8 +30,8 @@ def test_demo_endpoints_avoid_llm_and_transcribe():
     minutes_ai.assert_not_called()
     inbox_ai.assert_not_called()
     docs_ai.assert_not_called()
-    assert minutes.json()["docx_file_id"].endswith(".docx")
-    assert docs.json()["zip_file_id"].endswith(".zip")
+    assert client.get(f"/api/files/{minutes.json()['docx_file_id']}").status_code == 200
+    assert client.get(f"/api/files/{docs.json()['zip_file_id']}").status_code == 200
 
 
 def test_inbox_empty_live_input_is_friendly_error():
@@ -71,3 +71,14 @@ def test_ask_rejects_question_without_pdf_when_live():
 
     assert response.status_code == 400
     assert response.json()["error"] == "Please upload a PDF first."
+
+
+def test_upload_size_limit_is_friendly():
+    response = client.post(
+        "/api/docs",
+        data={"demo": "false", "doc_type": "Merit Certificate"},
+        files={"csv": ("students.csv", b"x" * (2 * 1024 * 1024 + 1), "text/csv")},
+    )
+
+    assert response.status_code == 413
+    assert "too large" in response.json()["error"]

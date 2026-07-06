@@ -36,7 +36,7 @@ Fallback: If transcription or Gemini fails, turn **Demo Mode** ON in the sidebar
 3. Click **Triage Inbox**.
 4. While the spinner runs, say: "The prompt asks for JSON only, so the app can safely turn messy emails into three priority buckets and draft replies."
 5. Show the **Urgent**, **Action Needed**, and **FYI** columns.
-6. Open one **Suggested reply** expander.
+6. Show one visible suggested reply under an urgent or action-needed email.
 7. Say: "The value here is deciding what needs attention today and drafting a professional response."
 
 Fallback: If the API fails or results do not appear, turn **Demo Mode** ON, click **Triage Inbox** again, and continue from the cached triage.
@@ -44,7 +44,7 @@ Fallback: If the API fails or results do not appear, turn **Demo Mode** ON, clic
 ## 3:45-5:15 — Module 3: Bulk Document Generator
 
 1. In the sidebar, click **Docs**.
-2. If **Demo Mode** is ON, confirm the app shows `Demo Mode: using samples/students.csv`.
+2. If **Demo Mode** is ON, use **Use sample CSV** for the safest cached run.
 3. If **Demo Mode** is OFF, upload `samples/students.csv`.
 4. Keep **Document type** set to **Merit Certificate**.
 5. Click **Generate All**.

@@ -32,7 +32,23 @@ Start-Process -FilePath $Npm `
     -RedirectStandardOutput $FrontendLog `
     -RedirectStandardError $FrontendErr `
     -WindowStyle Hidden
-Start-Sleep -Seconds 3
+
+function Wait-ForUrl($Url, $Name) {
+    for ($i = 0; $i -lt 20; $i++) {
+        try {
+            Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 2 | Out-Null
+            return
+        }
+        catch {
+            Start-Sleep -Seconds 1
+        }
+    }
+    Write-Host "$Name did not start. Check the log files in outputs/."
+    exit 1
+}
+
+Wait-ForUrl "http://127.0.0.1:8000/api/health" "Backend"
+Wait-ForUrl "http://127.0.0.1:5173" "Frontend"
 
 Start-Process "http://localhost:5173"
 

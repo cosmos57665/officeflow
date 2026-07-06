@@ -10,8 +10,8 @@ from backend.errors import AppError
 from lib import llm
 
 CACHE_JSON = Path("cache/ask_sample.json")
+SESSION_DIR = Path("outputs/ask_sessions")
 MAX_CONTEXT_CHARS = 80_000
-_DOCS: dict[str, list[dict]] = {}
 
 ASK_SYSTEM = """You answer questions about an uploaded office PDF.
 Answer ONLY from the document.
@@ -42,7 +42,8 @@ def load_pdf(pdf_bytes: bytes, filename: str):
         raise AppError("Please upload a PDF file.")
     pages = _extract_pages(pdf_bytes)
     doc_id = uuid4().hex
-    _DOCS[doc_id] = pages
+    SESSION_DIR.mkdir(parents=True, exist_ok=True)
+    (SESSION_DIR / f"{doc_id}.json").write_text(json.dumps(pages), encoding="utf-8")
     chars = sum(len(p["text"]) for p in pages)
     result = {
         "doc_id": doc_id,
@@ -78,7 +79,15 @@ def ask_question(doc_id: str | None, question: str, demo: bool):
     if demo:
         answer = _demo_answer(question)
     else:
-        pages = _DOCS.get(doc_id or "")
+        if not doc_id or len(doc_id) != 32 or any(ch not in "0123456789abcdef" for ch in doc_id):
+            raise AppError("Please upload a PDF first.")
+        session_path = SESSION_DIR / f"{doc_id or ''}.json"
+        if not session_path.exists():
+            raise AppError("Please upload a PDF first.")
+        try:
+            pages = json.loads(session_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise AppError("Please upload the PDF again.") from exc
         if not pages:
             raise AppError("Please upload a PDF first.")
         user = f"Document:\n{_context(pages)}\n\nQuestion: {question}"

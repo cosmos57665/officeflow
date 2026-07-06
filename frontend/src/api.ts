@@ -7,31 +7,50 @@ export type Health = {
   app_name: string;
 };
 
+const BACKEND_DOWN = 'Backend is not reachable. Restart OfficeFlow or use the Streamlit fallback.';
+
 async function parse<T>(response: Response): Promise<T> {
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
+  let data: Record<string, unknown> = {};
+  try {
+    const text = await response.text();
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(BACKEND_DOWN);
+  }
   if (!response.ok) {
-    throw new Error(data.error || 'Request failed. Please try again.');
+    throw new Error(typeof data.error === 'string' ? data.error : 'Request failed. Please try again.');
   }
   return data as T;
 }
 
+async function request<T>(input: RequestInfo | URL, init?: RequestInit) {
+  try {
+    return await parse<T>(await fetch(input, init));
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(BACKEND_DOWN);
+    }
+    throw error;
+  }
+}
+
 export async function getHealth() {
-  return parse<Health>(await fetch(`${API_BASE}/api/health`));
+  return request<Health>(`${API_BASE}/api/health`);
 }
 
 export async function postJson<T>(path: string, body: unknown) {
-  return parse<T>(
-    await fetch(`${API_BASE}${path}`, {
+  return request<T>(
+    `${API_BASE}${path}`,
+    {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    })
+    }
   );
 }
 
 export async function postForm<T>(path: string, form: FormData) {
-  return parse<T>(await fetch(`${API_BASE}${path}`, { method: 'POST', body: form }));
+  return request<T>(`${API_BASE}${path}`, { method: 'POST', body: form });
 }
 
 export function fileUrl(fileId: string) {

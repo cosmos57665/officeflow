@@ -4,11 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from backend import config
-from backend.errors import install_error_handlers
+from backend.errors import AppError, install_error_handlers
 from backend.files import serve_file
 from backend.services import ask_service, docs_service, inbox_service, minutes_service
 
 app = FastAPI(title="OfficeFlow API")
+MAX_AUDIO_BYTES = 50 * 1024 * 1024
+MAX_CSV_BYTES = 2 * 1024 * 1024
+MAX_PDF_BYTES = 20 * 1024 * 1024
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,6 +32,13 @@ class AskRequest(BaseModel):
     doc_id: str | None = None
     question: str = ""
     demo: bool = True
+
+
+async def read_limited(upload: UploadFile, max_bytes: int, label: str) -> bytes:
+    data = await upload.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        raise AppError(f"{label} is too large. Please choose a smaller file.", 413)
+    return data
 
 
 @app.get("/api/health")
@@ -52,8 +62,8 @@ async def minutes(
     use_sample: bool = Form(False),
     demo: bool = Form(True),
 ):
-    audio_bytes = await audio.read() if audio is not None else None
     filename = audio.filename if audio is not None else None
+    audio_bytes = await read_limited(audio, MAX_AUDIO_BYTES, "Audio file") if audio is not None else None
     return minutes_service.run(audio_bytes, filename, use_sample, demo)
 
 
@@ -69,14 +79,14 @@ async def docs(
     use_sample: bool = Form(False),
     demo: bool = Form(True),
 ):
-    csv_bytes = await csv.read() if csv is not None else None
     filename = csv.filename if csv is not None else None
+    csv_bytes = await read_limited(csv, MAX_CSV_BYTES, "CSV file") if csv is not None else None
     return docs_service.run(csv_bytes, filename, doc_type, use_sample, demo)
 
 
 @app.post("/api/ask/load")
 async def ask_load(pdf: UploadFile = File(...)):
-    return ask_service.load_pdf(await pdf.read(), pdf.filename)
+    return ask_service.load_pdf(await read_limited(pdf, MAX_PDF_BYTES, "PDF file"), pdf.filename)
 
 
 @app.post("/api/ask/question")

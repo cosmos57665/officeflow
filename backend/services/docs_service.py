@@ -17,7 +17,6 @@ from lib import docgen, llm
 SAMPLE_CSV = Path("samples/students.csv")
 CACHE_JSON = Path("cache/remarks_sample.json")
 OUTPUT_ROOT = Path("outputs/certificates")
-PREVIEW_DIR = Path("outputs/previews")
 REQUIRED = ["name", "class", "marks", "achievement"]
 
 DOC_TYPES = {
@@ -81,8 +80,9 @@ def _remarks(df, doc_type: str, demo: bool):
 def _make_outputs(df, remarks: dict, doc_type: str):
     style = DOC_TYPES[doc_type]
     output_dir = OUTPUT_ROOT / uuid4().hex
+    preview_dir = output_dir / "previews"
     output_dir.mkdir(parents=True, exist_ok=True)
-    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+    preview_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     for i, row in df.iterrows():
         safe = re.sub(r"[^A-Za-z0-9]+", "_", str(row["name"])).strip("_") or "student"
@@ -96,7 +96,7 @@ def _make_outputs(df, remarks: dict, doc_type: str):
             zf.write(path, arcname=path.name)
     previews = []
     for path in paths[:3]:
-        img_path = PREVIEW_DIR / f"{path.stem}.png"
+        img_path = preview_dir / f"{path.stem}.png"
         with fitz.open(path) as doc:
             img_path.write_bytes(doc.load_page(0).get_pixmap(dpi=80).tobytes("png"))
         previews.append({"name": path.name, "file_id": register_file(img_path)})
