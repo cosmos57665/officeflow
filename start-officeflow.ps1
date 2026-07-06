@@ -18,6 +18,25 @@ $BackendErr = Join-Path $Outputs "backend.err.log"
 $FrontendLog = Join-Path $Outputs "frontend.log"
 $FrontendErr = Join-Path $Outputs "frontend.err.log"
 
+function Stop-ExistingOfficeFlow {
+    Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.ProcessId -ne $PID -and
+            $_.CommandLine -and
+            (
+                ($_.CommandLine -like "*backend.main:app*" -and $_.CommandLine -like "*$Root*") -or
+                ($_.CommandLine -like "*vite*" -and $_.CommandLine -like "*$Frontend*") -or
+                ($_.CommandLine -like "*node*" -and $_.CommandLine -like "*$Frontend*")
+            )
+        } |
+        ForEach-Object {
+            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+        }
+}
+
+Stop-ExistingOfficeFlow
+Start-Sleep -Seconds 1
+
 Start-Process -FilePath $Python `
     -ArgumentList @("-m", "uvicorn", "backend.main:app", "--host", "127.0.0.1", "--port", "8000") `
     -WorkingDirectory $Root `
