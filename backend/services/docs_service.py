@@ -18,6 +18,15 @@ SAMPLE_CSV = Path("samples/students.csv")
 CACHE_JSON = Path("cache/remarks_sample.json")
 OUTPUT_ROOT = Path("outputs/certificates")
 REQUIRED = ["name", "class", "marks", "achievement"]
+ALIASES = {
+    "name": ["name", "student", "student_name", "employee", "employee_name", "full_name"],
+    "class": ["class", "grade", "department", "team", "role", "designation"],
+    "marks": ["marks", "score", "performance_score", "rating", "progress", "percent", "percentage"],
+    "achievement": [
+        "achievement", "achievements", "remark", "remarks", "feedback", "comments",
+        "comment", "summary", "progress_note", "progress_notes", "strengths",
+    ],
+}
 
 DOC_TYPES = {
     "Merit Certificate": {"title": "Merit Certificate",
@@ -41,14 +50,60 @@ def _read_csv(data: bytes, filename: str):
         df = pd.read_csv(io.BytesIO(data))
     except Exception as exc:
         raise AppError("Could not read this file as a CSV.") from exc
-    df.columns = [str(c).strip().lower() for c in df.columns]
-    missing = [c for c in REQUIRED if c not in df.columns]
-    if missing:
-        raise AppError(f"CSV is missing required column(s): {', '.join(missing)}.")
+    original_columns = [str(c).strip() for c in df.columns]
+    normalized_columns = [c.lower().replace(" ", "_").replace("-", "_") for c in original_columns]
+    df.columns = normalized_columns
+    df = _normalize_columns(df)
     df = df.dropna(subset=["name"]).reset_index(drop=True)
     if df.empty:
-        raise AppError("The CSV has no student rows.")
+        raise AppError("The CSV has no usable rows.")
     return df
+
+
+def _first_existing(df, aliases):
+    for alias in aliases:
+        if alias in df.columns:
+            return alias
+    return None
+
+
+def _normalize_columns(df):
+    normalized = pd.DataFrame()
+    name_col = _first_existing(df, ALIASES["name"])
+    if not name_col:
+        raise AppError(
+            "CSV is missing a name column. Use name, employee_name, student_name, or full_name."
+        )
+    normalized["name"] = df[name_col].astype(str).str.strip()
+
+    class_col = _first_existing(df, ALIASES["class"])
+    marks_col = _first_existing(df, ALIASES["marks"])
+    achievement_col = _first_existing(df, ALIASES["achievement"])
+
+    normalized["class"] = (
+        df[class_col].astype(str).str.strip() if class_col else "General"
+    )
+    normalized["marks"] = (
+        df[marks_col].astype(str).str.strip() if marks_col else "Not specified"
+    )
+    if achievement_col:
+        normalized["achievement"] = df[achievement_col].astype(str).str.strip()
+    else:
+        used = {name_col, class_col, marks_col}
+        extra_cols = [c for c in df.columns if c not in used and c is not None]
+        if not extra_cols:
+            raise AppError(
+                "CSV needs progress details. Add achievement, remarks, feedback, comments, or similar."
+            )
+        normalized["achievement"] = df[extra_cols].apply(
+            lambda row: "; ".join(
+                f"{col.replace('_', ' ')}: {value}"
+                for col, value in row.items()
+                if str(value).strip() and str(value).lower() != "nan"
+            ) or "Progress details not specified.",
+            axis=1,
+        )
+    return normalized
 
 
 def _remarks(df, doc_type: str, demo: bool):

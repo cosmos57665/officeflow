@@ -82,11 +82,49 @@ def test_docs_rejects_missing_columns():
     response = client.post(
         "/api/docs",
         data={"demo": "false", "doc_type": "Merit Certificate"},
-        files={"csv": ("students.csv", b"name\nAsha\n", "text/csv")},
+        files={"csv": ("students.csv", b"person\nAsha\n", "text/csv")},
     )
 
     assert response.status_code == 400
-    assert "missing required column" in response.json()["error"]
+    assert "name column" in response.json()["error"]
+
+
+def test_docs_accepts_employee_progress_csv_with_aliases():
+    csv = (
+        b"employee_name,department,performance_score,feedback\n"
+        b"Asha Rao,Operations,92,Handled quarterly filing smoothly\n"
+    )
+    with patch.object(docs_service.llm, "ask_claude_json_with_provider") as ask_json:
+        ask_json.return_value = ([{"name": "Asha Rao", "remark": "Great progress."}], "gemini")
+        response = client.post(
+            "/api/docs",
+            data={"demo": "false", "doc_type": "Progress Report"},
+            files={"csv": ("employees.csv", csv, "text/csv")},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["count"] == 1
+    sent_rows = ask_json.call_args.args[1]
+    assert "Asha Rao" in sent_rows
+    assert "Operations" in sent_rows
+
+
+def test_docs_builds_progress_details_from_extra_columns():
+    csv = (
+        b"name,role,q1_goal,q2_goal\n"
+        b"Rohan,Assistant,Improve response time,Complete training\n"
+    )
+    with patch.object(docs_service.llm, "ask_claude_json_with_provider") as ask_json:
+        ask_json.return_value = ([{"name": "Rohan", "remark": "Steady progress."}], "gemini")
+        response = client.post(
+            "/api/docs",
+            data={"demo": "false", "doc_type": "Progress Report"},
+            files={"csv": ("employees.csv", csv, "text/csv")},
+        )
+
+    assert response.status_code == 200
+    sent_rows = ask_json.call_args.args[1]
+    assert "q1 goal: Improve response time" in sent_rows
 
 
 def test_ask_rejects_question_without_pdf_when_live():

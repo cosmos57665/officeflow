@@ -31,7 +31,7 @@ export default function Docs({ demo }: { demo: boolean }) {
 
   return (
     <>
-      <ModuleHeader kicker="Module 03" title="Bulk Document Generator" text="Generate personalized PDFs from a student CSV." />
+      <ModuleHeader kicker="Module 03" title="Bulk Document Generator" text="Generate personalized PDFs from a student or employee CSV." />
       <Panel title="Input">
         <input type="file" accept=".csv" onChange={(event) => setFile(event.target.files?.[0] || null)} />
         <select value={docType} onChange={(event) => setDocType(event.target.value)}>
